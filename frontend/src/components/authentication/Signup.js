@@ -6,10 +6,11 @@ import {
   InputGroup,
   InputRightElement,
   VStack,
-  useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@chakra-ui/react';
 
 const Signup = () => {
   const [show, setShow] = useState(false);
@@ -22,6 +23,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   const toast = useToast();
+  const navigate = useNavigate();
 
   const handleShowPassword = () => {
     setShow((prevState) => !prevState);
@@ -70,9 +72,75 @@ const Signup = () => {
     }
   };
 
-  const submitHandler = (e) => {};
+  const submitHandler = async () => {
+    setLoading(true);
 
-  console.log('DDD', pic);
+    if (!name || !email || !password || !confirmpassword) {
+      toast({
+        title: 'Please fill all fields!',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmpassword) {
+      toast({
+        title: 'Passwords do not match!',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const signupData = {
+        name,
+        email,
+        password,
+        pic,
+      };
+
+      const { data } = await axios.post('/api/user', signupData, config);
+
+      toast({
+        title: 'User Registration Successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      });
+
+      localStorage.setItem('userInfo', JSON.stringify(data));
+
+      setLoading(false);
+
+      navigate('/chats', { replace: true });
+    } catch (err) {
+      console.log(err.message);
+      toast({
+        title: 'Error Occured!',
+        description: err.response.data.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      });
+      setLoading(false);
+    }
+  };
 
   return (
     <VStack spacing={'5px'}>

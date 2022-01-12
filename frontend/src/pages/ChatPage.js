@@ -14,8 +14,6 @@ const ChatPage = () => {
     fetchChats();
   }, []);
 
-  console.log('CCC', chats);
-
   return (
     <div>
       {chats.map((chat) => (
