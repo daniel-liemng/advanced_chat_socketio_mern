@@ -61,3 +61,24 @@ exports.authUser = asyncHandler(async (req, res, next) => {
     token: generateToken(user._id),
   });
 });
+
+// Get all users
+// /api/user?search=xxx -> query
+// Search users based on partial input
+exports.getAllUsers = asyncHandler(async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        // search if query match the name or email of user, case insensitive
+        $or: [
+          { name: { $regex: req.query.search, $options: 'i' } },
+          { email: { $regex: req.query.search, $options: 'i' } },
+        ],
+      }
+    : {};
+
+  // Find all user in search keyword, but not the logged in user
+  // To get req.user._id -> route is protected
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+
+  res.send(users);
+});
