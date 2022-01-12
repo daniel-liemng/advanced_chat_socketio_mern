@@ -1,28 +1,33 @@
 require('dotenv').config();
 
 const express = require('express');
+const colors = require('colors');
 
+const connectDB = require('./config/db');
 const { chats } = require('./data/data');
+const userRoutes = require('./routes/userRoutes');
+const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
+
+connectDB();
 
 const app = express();
 
-// Routes
+// middleware
+app.use(express.json());
+
+// routes
 app.get('/', (req, res) => {
-  res.send('OKKK');
+  res.send('API Route Running Successfully');
 });
 
-app.get('/api/chat', (req, res) => {
-  res.send(chats);
-});
+app.use('/api/user', userRoutes);
 
-app.get('/api/chat/:id', (req, res) => {
-  const oneChat = chats.find((item) => item._id === req.params.id);
-  console.log(oneChat);
-  res.send(oneChat);
-});
+// 2 Error handler middlewares at last
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
-  console.log(`Server Running on Port ${PORT}`);
+  console.log(`Server Running on Port ${PORT}`.yellow.bold);
 });
