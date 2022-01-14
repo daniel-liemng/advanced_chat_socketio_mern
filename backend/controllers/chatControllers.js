@@ -143,6 +143,55 @@ exports.renameGroup = asyncHandler(async (req, res) => {
   }
 });
 
-exports.removeFromGroup = asyncHandler(async (req, res) => {});
+// Add more users to the Group After Group is created
+exports.addToGroup = asyncHandler(async (req, res) => {
+  const { chatId, userId } = req.body;
 
-exports.addToGroup = asyncHandler(async (req, res) => {});
+  try {
+    const added = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $push: { users: userId },
+      },
+      { new: true },
+    )
+      .populate('users', '-password')
+      .populate('groupAdmin', '-password');
+
+    if (!added) {
+      res.status(404);
+      throw new Error('Chat Not Found');
+    } else {
+      res.json(added);
+    }
+  } catch (err) {
+    res.status(400);
+    throw new Error(err.message);
+  }
+});
+
+exports.removeFromGroup = asyncHandler(async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  try {
+    const removed = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $pull: { users: userId },
+      },
+      { new: true },
+    )
+      .populate('users', '-password')
+      .populate('groupAdmin', '-password');
+
+    if (!removed) {
+      res.status(404);
+      throw new Error('Chat Not Found');
+    } else {
+      res.json(removed);
+    }
+  } catch (err) {
+    res.status(400);
+    throw new Error(err.message);
+  }
+});

@@ -21,7 +21,9 @@ router.route('/group').post(protect, createGroupChat);
 
 router.route('/rename').put(protect, renameGroup);
 
-// router.route('/groupremove').get(protect, removeFromGroup);
-// router.route('/groupadd').get(protect, addToGroup);
+// Add more users to the Group After Group is created
+router.route('/groupadd').put(protect, addToGroup);
+
+router.route('/groupremove').put(protect, removeFromGroup);
 
 module.exports = router;
