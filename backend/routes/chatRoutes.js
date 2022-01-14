@@ -16,7 +16,9 @@ router.route('/').post(protect, accessChat);
 // Fetch all chats for a particular user (logged in user)
 router.route('/').get(protect, fetchChats);
 
-// router.route('/group').get(protect, createGroupChat);
+// Create group chat by adding users, including the logged user
+router.route('/group').post(protect, createGroupChat);
+
 // router.route('/rename').get(protect, renameGroup);
 // router.route('/groupremove').get(protect, removeFromGroup);
 // router.route('/groupadd').get(protect, addToGroup);

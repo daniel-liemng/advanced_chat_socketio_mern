@@ -79,7 +79,45 @@ exports.fetchChats = asyncHandler(async (req, res) => {
   }
 });
 
-exports.createGroupChat = asyncHandler(async (req, res) => {});
+//// Create group chat by adding users, including the logged user
+exports.createGroupChat = asyncHandler(async (req, res) => {
+  const { users, name } = req.body;
+
+  if (!users || !name) {
+    return res.status(400).send({ message: 'Please fill out all the fields!' });
+  }
+
+  // Convert JSON to obj
+  let usersObj = JSON.parse(users);
+
+  // Group should have more than 2 users
+  if (usersObj.length < 2) {
+    return res
+      .status(400)
+      .send({ message: 'More than 2 users is required to form a group chat' });
+  }
+
+  // Select users to group, then add the current user (logged in user) to group
+  usersObj.push(req.user);
+
+  try {
+    const groupChat = await Chat.create({
+      chatName: name,
+      users: usersObj,
+      isGroupChat: true,
+      groupAdmin: req.user,
+    });
+
+    const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
+      .populate('users', '-password')
+      .populate('groupAdmin', '-password');
+
+    res.status(200).send(fullGroupChat);
+  } catch (err) {
+    res.status(400);
+    throw new Error(err.message);
+  }
+});
 
 exports.renameGroup = asyncHandler(async (req, res) => {});
 
