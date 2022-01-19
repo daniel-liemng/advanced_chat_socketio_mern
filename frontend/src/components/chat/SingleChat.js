@@ -4,6 +4,7 @@ import { getSender, getSenderFull } from '../../config/ChatLogics';
 
 import { ChatState } from '../../context/ChatProvider';
 import ProfileModal from '../layout/ProfileModal';
+import UpdateGroupChatModal from '../layout/UpdateGroupChatModal';
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
@@ -36,10 +37,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             ) : (
               <>
                 {selectedChat.chatName.toUpperCase()}
-                {/* <UpdateGroupChatModal
+                <UpdateGroupChatModal
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
-                /> */}
+                />
               </>
             )}
           </Text>
