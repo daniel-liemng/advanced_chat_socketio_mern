@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { ChatState } from '../../context/ChatProvider';
 import ChatLoading from './ChatLoading';
 import { getSender } from '../../config/ChatLogics';
+import GroupChatModal from '../layout/GroupChatModal';
 
 const MyChats = () => {
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
@@ -63,13 +64,15 @@ const MyChats = () => {
         alignItems={'center'}
       >
         My Chats
-        <Button
-          d={'flex'}
-          fontSize={{ base: '17px', md: '10px', lg: '17px' }}
-          rightIcon={<AddIcon />}
-        >
-          New Group Chat
-        </Button>
+        <GroupChatModal>
+          <Button
+            d={'flex'}
+            fontSize={{ base: '17px', md: '10px', lg: '17px' }}
+            rightIcon={<AddIcon />}
+          >
+            New Group Chat
+          </Button>
+        </GroupChatModal>
       </Box>
 
       <Box
